@@ -236,13 +236,17 @@ class SubCliServe:
                 cache_block_seq_len=args.cache_block_seq_len,
                 enable_prefix_caching=args.enable_prefix_caching,
             )
-        chat_template_config = ChatTemplateConfig(
-            model_name=args.model_name,
-            meta_instruction=args.meta_instruction,
-            capability=args.cap)
-        if args.chat_template:
+        if args.meta_instruction or args.cap:
+            chat_template_config = ChatTemplateConfig(
+                model_name=args.model_name,
+                meta_instruction=args.meta_instruction,
+                capability=args.cap)
+        elif args.chat_template:
             chat_template_config = ChatTemplateConfig.from_json(
                 args.chat_template)
+        else:
+            # omit the model_name here to let the engine infer the chat template afterward
+            chat_template_config = None
         run(args.model_path_or_server,
             server_name=args.server_name,
             server_port=args.server_port,
